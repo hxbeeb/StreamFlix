@@ -3,35 +3,35 @@ import { useCallback, useState } from "react";
 import Input from "../components/input";
 import axios from "axios";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 
 const Auth = () => {
-  const router=useRouter();
-
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [variant, setVariant] = useState("Sign in");
+  const [error, setError] = useState(""); // New state for error handling
 
   const toggleVariant = useCallback(() => {
     setVariant((current) => (current === 'Sign in' ? 'Register' : 'Sign in'));
   }, []);
 
-  const login=useCallback(async()=>{
-    try{
-      await signIn('credentials',{
-        email,password,
-        redirect:false,
-        callbackUrl:'/'
+  const login = useCallback(async () => {
+    try {
+      const result = await signIn('credentials', {
+        email, password,
+        redirect: false,
+        callbackUrl: '/profiles'
       });
-      router.push("/");
+      if (result?.error) {
+        setError(result.error);
+      }
     }
-    catch(e)
-    {
-      console.log(e);
+    catch (e) {
+      setError("An unexpected error occurred");
+      console.error(e);
     }
-  },[email,password,router]);
+  }, [email, password]);
 
   const register = useCallback(async () => {
     try {
@@ -44,8 +44,7 @@ const Auth = () => {
     } catch (e) {
       console.log(e);
     }
-  }, [email, name, password,login]);
-
+  }, [email, name, password, login]);
 
   return (
     <div className="relative h-full w-full bg-[url('/images/hero.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
@@ -62,47 +61,41 @@ const Auth = () => {
               {variant === 'Register' && (
                 <Input
                   id="name"
-                  onChange={(event:any) => setName(event.target.value)}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => setName(event.target.value)}
                   value={name}
                   label="Name"
                 />
               )}
               <Input
                 id="email"
-                onChange={(event:any) => setEmail(event.target.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
                 value={email}
                 label="Email"
                 type="email"
               />
               <Input
                 id="password"
-                onChange={(event:any) => setPassword(event.target.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)}
                 value={password}
                 label="Password"
                 type="password"
               />
             </div>
+            {error && <p className="text-red-500 mt-2">{error}</p>}
             <button
-              onClick={variant === "Sign in" ?login :register}
+              onClick={variant === "Sign in" ? login : register}
               className="bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-700 transition"
             >
               {variant}
             </button>
             <div className="flex flex-row items-center gap-4 mt-8 justify-center">
-              <div onClick={()=>signIn('google',{callbackUrl:'/'})}
-              className="
-              w-10
-              h-10
-              bg-white
-              rounded-full
-              flex
-              items-center
-              justify-center
-              cursor-pointer
-              hover:opacity-80
-              transition">
-                <FcGoogle size={30}/>
-              </div>
+              <button
+                onClick={() => signIn('google', { callbackUrl: '/profiles' })}
+                className="w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition"
+                aria-label="Sign in with Google"
+              >
+                <FcGoogle size={30} />
+              </button>
             </div>
             <p className="text-neutral-500 mt-12">
               {variant === "Sign in" ? "First time using Netflix?" : "Already have an account?"}

@@ -5,17 +5,12 @@ import {compare} from 'bcrypt';
 import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-
-
 export default NextAuth({
     providers:[
         GoogleProvider({
             clientId:process.env.GOOGLE_CLIENT_ID||'',
             clientSecret:process.env.GOOGLE_CLIENT_SECRET||''
         }),
-
-
-
         Credentials({
             id:'credentials',
             name:'credentials',
@@ -55,7 +50,7 @@ export default NextAuth({
         }})
     ],
     pages:{
-        signIn:'?auth',
+        signIn:'/auth/signin', // Update this to a more specific path
     },
     debug:process.env.NODE_ENV==='development',
     adapter:PrismaAdapter(prismadb),
