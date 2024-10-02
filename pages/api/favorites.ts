@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import prismadb from "@/lib/prismadb";
 import serverAuth from "@/lib/serverAuth";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -9,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method !== 'GET') {
         return res.status(405).end();
     } try {
-        const { currentUser } = await serverAuth(req);
+        const { data:currentUser } = await useCurrentUser();
 
         const favoriteIds = currentUser?.favoriteIds || [];
 

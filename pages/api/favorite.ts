@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prismadb from "@/lib/prismadb";
 import serverAuth from "@/lib/serverAuth";
 import { without } from "lodash";
+import useCurrentUser from "@/hooks/useCurrentUser";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -34,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Handle DELETE request to remove favorite
     if (req.method === 'DELETE') {
-      const { currentUser } = await serverAuth(req);  // Use serverAuth instead of useCurrentUser()
+      const { data:currentUser } = await useCurrentUser();    // Use serverAuth instead of useCurrentUser()
       const { movieId } = req.body;
 
       // Check if movie exists
