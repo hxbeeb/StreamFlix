@@ -11,7 +11,8 @@ const serverAuth = async (req: NextApiRequest) => {
   // Assuming `session.user` contains user details
   const currentUser = { 
     email: session.user?.email || "",
-    name: session.user?.name || ""
+    name: session.user?.name || "",
+    // favoriteIds:session.user?.favoriteIds || [],
    };
   return { currentUser };
 };

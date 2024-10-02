@@ -3,14 +3,21 @@ import NavBar from "./components/NavBar";
 import useCurrentUser from "@/hooks/useCurrentUser"; // Fixed typo
 import { useSession} from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Billboard from "./components/Billboard";
+import MovieList from "./components/MovieList";
+import useMovieList from "@/hooks/useMovieList";
+import useFavorites from "@/hooks/useFavorites";
+import InfoModal from "./components/infoModel";
+import useInfoModal from "@/hooks/useInfoModel";
 
 export default function Home() {
-    const { data: user, error, isLoading } = useCurrentUser(); 
+    const { data: user, error, isLoading } = useCurrentUser();
     const { data: session, status } = useSession();
     const router = useRouter();
-
+    const { data: movies=[] } = useMovieList();
+    const { data: favorites=[] } = useFavorites();
+    const { isOpen, closeModal } = useInfoModal();
     useEffect(() => {
         if (status === "loading") return;
         if (!session) {
@@ -30,11 +37,17 @@ export default function Home() {
     if (!user) {
         return <p>No user data available</p>;
     }
+    
 
     return (
         <>
+           <InfoModal visible={isOpen} onClose={closeModal} />
            <NavBar/>
            <Billboard/>
+           <div className="pb-40">
+            <MovieList title="Trending Now" data={movies} />
+            <MovieList title="My List" data={favorites} />
+           </div>
         </>
     );
 }
