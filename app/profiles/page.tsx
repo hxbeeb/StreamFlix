@@ -19,7 +19,7 @@ const Profiles = () => {
         if (!session) {
             router.push('/auth');
         }
-    }, [session, status]);
+    }, [session, status, router]);
 
     if (status === "loading" || isLoading) {
         return <p>Loading...</p>;

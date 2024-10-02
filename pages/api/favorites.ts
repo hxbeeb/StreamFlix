@@ -1,33 +1,32 @@
-import { NextApiRequest, NextApiResponse } from "next";
+// import { NextApiRequest, NextApiResponse } from "next";
 
-import prismadb from "@/lib/prismadb";
-import serverAuth from "@/lib/serverAuth";
-import useCurrentUser from "@/hooks/useCurrentUser";
+// import prismadb from "@/lib/prismadb";
+// import serverAuth from "@/lib/serverAuth";
 
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+// export default async function handler(req: NextApiRequest, res: NextApiResponse) {
    
-    if (req.method !== 'GET') {
-        return res.status(405).end();
-    } try {
-        const { data:currentUser } = await useCurrentUser();
+//     if (req.method !== 'GET') {
+//         return res.status(405).end();
+//     } try {
+//         const { currentUser } = await serverAuth(req);
 
-        const favoriteIds = currentUser?.favoriteIds || [];
+//         const favoriteIds = currentUser?.favoriteIds || [];
 
         
 
-        const favoriteMovies = await prismadb.movie.findMany({
-            where: {
-                id: {
-                    in: favoriteIds || [],
-                }
-            }
-        });
+//         const favoriteMovies = await prismadb.movie.findMany({
+//             where: {
+//                 id: {
+//                     in: favoriteIds || [],
+//                 }
+//             }
+//         });
 
-        return res.status(200).json(favoriteMovies);
-    } catch (error) {
-        console.log('Error:', error);
-        return res.status(400).end();
-    }
-} 
+//         return res.status(200).json(favoriteMovies);
+//     } catch (error) {
+//         console.log('Error:', error);
+//         return res.status(400).end();
+//     }
+// } 
 
